@@ -1,0 +1,20 @@
+@import url("./areweyet/common.css");
+/* 
+table {
+} */
+th, td {
+  vertical-align: top;
+}
+td ul {
+  margin: 0;
+  white-space: nowrap; /* XXX do this for a class on testing tag instead */
+}
+tr {
+  padding: 4px 0;
+  border-bottom: solid 1px rgba(0, 0, 0, .2);
+}
+
+td .desc-box {
+  width: auto;
+  padding-bottom: 5px;
+}

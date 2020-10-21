@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>mc-changes</title>
+  <link rel="stylesheet" href="static/page.css">
+</head>
+
+<body>
+  <input type="text" name="metaBugID" id="metaBugID" placeholder="Meta bug ID...">
+  <select name="testingTags" id="testingTags" multiple>
+    <option value="testing-approved" selected>testing-approved</option>
+    <option value="testing-exception-elsewhere" selected>testing-exception-elsewhere</option>
+    <option value="testing-exception-other" selected>testing-exception-other</option>
+    <option value="testing-exception-ui" selected>testing-exception-ui</option>
+    <option value="testing-exception-unchanged" selected>testing-exception-unchanged</option>
+  </select>
+  <table id="table" class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Bug</th>
+        <th scope="col">Testing Tags</th>
+        <!-- <th scope="col">Riskness</th> -->
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <script src="static/page.js"></script>
+</body>
+
+</html>
