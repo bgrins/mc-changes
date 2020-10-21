@@ -1,6 +1,5 @@
 // TODO:
 // Fetch relevant metas and list: https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status&keywords=feature-testing-meta%2C%20&keywords_type=allwords
-
 let options = {
   "metaBugID": {
     value: null,
@@ -28,10 +27,7 @@ let onLoad = new Promise(function(resolve, reject) {
   window.onload = resolve;
 });
 
-// TODO: Show info about testing tags.
-// TODO: Add filter on testing tags.
 // TODO: Add filter on dates.
-// TODO: Add filter on "bugs which block bug X".
 // TODO: On click, show previous components affected by similar patches.
 // TODO: On click, show previous bugs caused by similar patches.
 
@@ -39,7 +35,7 @@ const HIGH_RISK_COLOR = "rgb(255, 13, 87)";
 const MEDIUM_RISK_COLOR = "darkkhaki";
 const LOW_RISK_COLOR = "green";
 
-function addRow(bugSummary) {
+function addRow(bugSummary, riskinessEnabled) {
   let table = document.getElementById("table");
 
   let row = table.insertRow(table.rows.length);
@@ -93,23 +89,27 @@ function addRow(bugSummary) {
   }
   testing_tags_column.appendChild(testing_tags_list);
 
-  /*let risk_column = row.insertCell(3);
-  let riskText = document.createElement("span");
-  riskText.textContent = Math.round(100 * bugSummary["risk"]);
-  if (bugSummary["risk"] > 0.8) {
-    riskText.style.color = HIGH_RISK_COLOR;
-  } else if (bugSummary["risk"] > 0.5) {
-    riskText.style.color = MEDIUM_RISK_COLOR;
-  } else {
-    riskText.style.color = LOW_RISK_COLOR;
+  if (riskinessEnabled) {
+      let risk_column = row.insertCell(3);
+      let riskText = document.createElement("span");
+      riskText.textContent = Math.round(100 * bugSummary["risk"]);
+      if (bugSummary["risk"] > 0.8) {
+        riskText.style.color = HIGH_RISK_COLOR;
+      } else if (bugSummary["risk"] > 0.5) {
+        riskText.style.color = MEDIUM_RISK_COLOR;
+      } else {
+        riskText.style.color = LOW_RISK_COLOR;
+      }
+      risk_column.appendChild(riskText);
   }
-  risk_column.appendChild(riskText);*/
 }
 
 function buildTable() {
   fetch("data/date_landings.json", {cache: "no-store"})
   .then(response => response.json())
   .then(data => {
+    let searchParams = new URL(location.href).searchParams;
+    let riskinessEnabled = Boolean(searchParams.get("riskiness"));
     let metaBugID = getOption("metaBugID");
     let testingTags = getOption("testingTags");
 
@@ -124,8 +124,14 @@ function buildTable() {
 
     bugSummaries.sort((bugSummary1, bugSummary2) => bugSummary2["risk"] - bugSummary1["risk"]);
 
+    if (riskinessEnabled) {
+      document.getElementById("riskinessColumn").style.removeProperty("display");
+    } else {
+      document.getElementById("riskinessColumn").style.display = "none";
+    }
+
     for (let bugSummary of bugSummaries) {
-      addRow(bugSummary);
+      addRow(bugSummary, riskinessEnabled);
     }
   });
 }
