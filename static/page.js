@@ -1,3 +1,6 @@
+// TODO:
+// Fetch relevant metas and list: https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status&keywords=feature-testing-meta%2C%20&keywords_type=allwords
+
 let options = {
   "metaBugID": {
     value: null,
