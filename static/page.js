@@ -1,5 +1,14 @@
-// TODO:
-// Fetch relevant metas and list: https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status&keywords=feature-testing-meta%2C%20&keywords_type=allwords
+// TODO: Add filter on dates - see getOption("startDate") and getOption("endDate")
+// TODO: On click, show previous components affected by similar patches.
+// TODO: On click, show previous bugs caused by similar patches.
+
+let METABUGS_URL =
+  "https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status&keywords=feature-testing-meta%2C%20&keywords_type=allwords";
+
+const HIGH_RISK_COLOR = "rgb(255, 13, 87)";
+const MEDIUM_RISK_COLOR = "darkkhaki";
+const LOW_RISK_COLOR = "green";
+
 let options = {
   metaBugID: {
     value: null,
@@ -8,6 +17,14 @@ let options = {
   testingTags: {
     value: null,
     type: "select",
+  },
+  startDate: {
+    value: null,
+    type: "text",
+  },
+  endDate: {
+    value: null,
+    type: "text",
   },
   riskinessEnabled: {
     value: null,
@@ -18,12 +35,10 @@ let options = {
 if (new URLSearchParams(window.location.search).has("riskiness")) {
   document.querySelector("#riskinessEnabled").checked = true;
 }
-let METABUGS_URL =
-  "https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status&keywords=feature-testing-meta%2C%20&keywords_type=allwords";
 
 let metabugsDropdown = document.querySelector("#featureMetabugs");
 
-// TODO: port this to an option probably
+// TODO: port this to an option maybe
 async function buildMetabugsDropdown() {
   metabugsDropdown.addEventListener("change", () => {
     setOption("metaBugID", metabugsDropdown.value);
@@ -44,7 +59,6 @@ async function getMetabugs() {
   let json = await response.json();
   return json.bugs;
 }
-buildMetabugsDropdown();
 
 function getOption(name) {
   return options[name].value;
@@ -57,18 +71,6 @@ function getOptionType(name) {
 function setOption(name, value) {
   return (options[name].value = value);
 }
-
-let onLoad = new Promise(function (resolve, reject) {
-  window.onload = resolve;
-});
-
-// TODO: Add filter on dates.
-// TODO: On click, show previous components affected by similar patches.
-// TODO: On click, show previous bugs caused by similar patches.
-
-const HIGH_RISK_COLOR = "rgb(255, 13, 87)";
-const MEDIUM_RISK_COLOR = "darkkhaki";
-const LOW_RISK_COLOR = "green";
 
 function addRow(bugSummary) {
   let table = document.getElementById("table");
@@ -166,6 +168,7 @@ function buildTable() {
       }
 
       if (testingTags) {
+        console.log(testingTags);
         bugSummaries = bugSummaries.filter((bugSummary) =>
           bugSummary["testing"].some((tag) => testingTags.includes(tag))
         );
@@ -199,52 +202,51 @@ function rebuildTable() {
   buildTable();
 }
 
-onLoad
-  .then(function () {
-    Object.keys(options).forEach(function (optionName) {
-      let optionType = getOptionType(optionName);
-      let elem = document.getElementById(optionName);
+(function init() {
+  buildMetabugsDropdown();
 
-      if (optionType === "text") {
+  Object.keys(options).forEach(function (optionName) {
+    let optionType = getOptionType(optionName);
+    let elem = document.getElementById(optionName);
+
+    if (optionType === "text") {
+      setOption(optionName, elem.value);
+
+      elem.onchange = function () {
         setOption(optionName, elem.value);
+        rebuildTable();
+      };
+    } else if (optionType === "checkbox") {
+      setOption(optionName, elem.checked);
 
-        elem.onchange = function () {
-          setOption(optionName, elem.value);
-          rebuildTable();
-        };
-      }
-      else if (optionType === "checkbox") {
+      elem.onchange = function () {
         setOption(optionName, elem.checked);
+        rebuildTable();
+      };
+    } else if (optionType === "select") {
+      let value = [];
+      for (let option of elem.options) {
+        if (option.selected) {
+          value.push(option.value);
+        }
+      }
 
-        elem.onchange = function () {
-          setOption(optionName, elem.checked);
-          rebuildTable();
-        };
-      } else if (optionType === "select") {
+      setOption(optionName, value);
+
+      elem.onchange = function () {
         let value = [];
         for (let option of elem.options) {
           if (option.selected) {
-            value.push(option.text);
+            value.push(option.value);
           }
         }
 
         setOption(optionName, value);
-
-        elem.onchange = function () {
-          let value = [];
-          for (let option of elem.options) {
-            if (option.selected) {
-              value.push(option.text);
-            }
-          }
-
-          setOption(optionName, value);
-          rebuildTable();
-        };
-      } else {
-        throw new Error("Unexpected option type.");
-      }
-    });
-  })
-  .then(buildTable)
-  .catch(console.error);
+        rebuildTable();
+      };
+    } else {
+      throw new Error("Unexpected option type.");
+    }
+  });
+  buildTable();
+})();
