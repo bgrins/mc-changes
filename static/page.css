@@ -52,3 +52,12 @@ h3 {
 #filter-container label {
   font-style: italic;
 }
+
+/* For testing/ graph page */
+aside ul {
+  margin: 0;
+  padding: 0;
+}
+aside ul li {
+  list-style: none;
+}
