@@ -29,9 +29,8 @@ let landingsData = (async function () {
   return json;
 })();
 
-async function getTestingPolicySummaryData() {
+async function getTestingPolicySummaryData(grouping = "daily") {
   let data = await landingsData;
-
   let orderedDates = [];
   for (let date in data) {
     orderedDates.push(date);
@@ -42,6 +41,16 @@ async function getTestingPolicySummaryData() {
       temporal.Temporal.Date.from(b)
     );
   });
+
+  // TODO:
+
+  // if (grouping == "daily") {
+
+  // } else if (grouping == "weekly") {
+
+  // } else if (grouping == "monthly") {
+
+  // }
 
   let returnedData = {};
   for (let date of orderedDates) {
@@ -70,6 +79,11 @@ async function getTestingPolicySummaryData() {
 
     returnedData[date] = returnedDataForDate;
   }
+
+  // If grouping by week:
+  // let foo = temporal.Temporal.Date.from("2020-10-09")
+  // foo.weekOfYear
+  // foo.year
 
   return returnedData;
 }

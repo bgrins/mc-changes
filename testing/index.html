@@ -20,9 +20,9 @@
       <h3>Filters</h3>
       <em>(not implemented)</em>
       <ul>
-        <li><label><input name="grouping" type="radio" checked />Daily</label></li>
-        <li><label><input name="grouping" type="radio" />Weekly</label></li>
-        <li><label><input name="grouping" type="radio" />Monthly</label></li>
+        <li><label><input name="grouping" type="radio" value="daily" checked />Daily</label></li>
+        <li><label><input name="grouping" type="radio" value="weekly" />Weekly</label></li>
+        <li><label><input name="grouping" type="radio" value="monthly" />Monthly</label></li>
       </ul>
     </aside>
     <main>
@@ -34,74 +34,78 @@
   <script src="../static/proposal-temporal.js"></script>
   <script src="../static/common.js"></script>
   <script>
-    (async function () {
-      let summaryData = await getTestingPolicySummaryData();
-      console.log(summaryData);
-
-      let series = [];
-      let colors = [];
-      for (let tag in TESTING_TAGS) {
-        series.push({ name: tag, data: [] });
-        colors.push(TESTING_TAGS[tag]);
+    (function () {
+      let chart = null;
+      let radios = [...document.querySelectorAll("input[name=grouping]")];
+      var previouslySelected = document.querySelector("input[name=grouping]:checked");
+      for (let radio of radios) {
+        radio.addEventListener("change", function () {
+          if (this !== previouslySelected) {
+            previouslySelected = this;
+            rerender(this.value);
+          }
+        });
       }
 
-      let xaxisCategories = [];
-      for (let date in summaryData) {
-        xaxisCategories.push(date);
-        let i = 0;
-        for (let tag in summaryData[date]) {
-          series[i].data.push(summaryData[date][tag]);
-          i++;
+      async function rerender(grouping) {
+        let summaryData = await getTestingPolicySummaryData(grouping);
+        console.log(summaryData);
+
+        let series = [];
+        let colors = [];
+        for (let tag in TESTING_TAGS) {
+          series.push({ name: tag, data: [] });
+          colors.push(TESTING_TAGS[tag]);
         }
-      }
 
-      var options = {
-        series, /*: [
-          {
-            name: "testing-approved",
-            data: [10, 41, 35, 51, 49, 62, 69, 91, 148],
+        let xaxisCategories = [];
+        for (let date in summaryData) {
+          xaxisCategories.push(date);
+          let i = 0;
+          for (let tag in summaryData[date]) {
+            series[i].data.push(summaryData[date][tag]);
+            i++;
+          }
+        }
+
+        var options = {
+          series,
+          colors,
+          chart: {
+            height: 350,
+            type: "line",
+            zoom: {
+              enabled: false,
+            },
           },
-          {
-            name: "testing-exception-unchanged",
-            data: [1, 10, 40, 50, 49, 50, 75, 50, 10],
-          },
-          {
-            name: "no testing data",
-            data: [40, 41, 35, 10, 9, 8, 7, 2, 1],
-          },
-        ], */
-        colors,
-        chart: {
-          height: 350,
-          type: "line",
-          zoom: {
+          dataLabels: {
             enabled: false,
           },
-        },
-        dataLabels: {
-          enabled: false,
-        },
-        stroke: {
-          curve: "straight",
-        },
-        // title: {
-        //   text: "Product Trends by Month",
-        //   align: "left",
-        // },
-        grid: {
-          row: {
-            colors: ["#f3f3f3", "transparent"], // takes an array which will be repeated on columns
-            opacity: 0.5,
+          stroke: {
+            curve: "straight",
           },
-        },
-        xaxis: {
-          categories: xaxisCategories,
-        },
-      };
+          // title: {
+          //   text: "Product Trends by Month",
+          //   align: "left",
+          // },
+          grid: {
+            row: {
+              colors: ["#f3f3f3", "transparent"], // takes an array which will be repeated on columns
+              opacity: 0.5,
+            },
+          },
+          xaxis: {
+            categories: xaxisCategories,
+          },
+        };
 
-      var chart = new ApexCharts(document.querySelector("#chart"), options);
-      chart.render();
-
+        if (chart) {
+          chart.destroy();
+        }
+        chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
+      }
+      rerender(previouslySelected ? previouslySelected.value : undefined);
     })();
   </script>
 </body>
