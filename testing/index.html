@@ -26,56 +26,75 @@
   <script src="../static/proposal-temporal.js"></script>
   <script src="../static/common.js"></script>
   <script>
-    (async function() {
+    (async function () {
       let summaryData = await getTestingPolicySummaryData();
-      console.log(summaryData)
-    })();
-    var options = {
-      series: [
-        {
-          name: "testing-approved",
-          data: [10, 41, 35, 51, 49, 62, 69, 91, 148],
+      console.log(summaryData);
+
+      let series = [];
+      let colors = [];
+      for (let tag in TESTING_TAGS) {
+        series.push({ name: tag, data: [] });
+        colors.push(TESTING_TAGS[tag]);
+      }
+
+      let xaxisCategories = [];
+      for (let date in summaryData) {
+        xaxisCategories.push(date);
+        let i = 0;
+        for (let tag in summaryData[date]) {
+          series[i].data.push(summaryData[date][tag]);
+          i++;
+        }
+      }
+
+      var options = {
+        series, /*: [
+          {
+            name: "testing-approved",
+            data: [10, 41, 35, 51, 49, 62, 69, 91, 148],
+          },
+          {
+            name: "testing-exception-unchanged",
+            data: [1, 10, 40, 50, 49, 50, 75, 50, 10],
+          },
+          {
+            name: "no testing data",
+            data: [40, 41, 35, 10, 9, 8, 7, 2, 1],
+          },
+        ], */
+        colors,
+        chart: {
+          height: 350,
+          type: "line",
+          zoom: {
+            enabled: false,
+          },
         },
-        {
-          name: "testing-exception-unchanged",
-          data: [1, 10, 40, 50, 49, 50, 75, 50, 10],
-        },
-        {
-          name: "no testing data",
-          data: [40, 41, 35, 10, 9, 8, 7, 2, 1],
-        },
-      ],
-      chart: {
-        height: 350,
-        type: "line",
-        zoom: {
+        dataLabels: {
           enabled: false,
         },
-      },
-      dataLabels: {
-        enabled: false,
-      },
-      stroke: {
-        curve: "straight",
-      },
-      // title: {
-      //   text: "Product Trends by Month",
-      //   align: "left",
-      // },
-      grid: {
-        row: {
-          colors: ["#f3f3f3", "transparent"], // takes an array which will be repeated on columns
-          opacity: 0.5,
+        stroke: {
+          curve: "straight",
         },
-      },
-      xaxis: {
-        categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"],
-      },
-    };
+        // title: {
+        //   text: "Product Trends by Month",
+        //   align: "left",
+        // },
+        grid: {
+          row: {
+            colors: ["#f3f3f3", "transparent"], // takes an array which will be repeated on columns
+            opacity: 0.5,
+          },
+        },
+        xaxis: {
+          categories: xaxisCategories,
+        },
+      };
 
-    var chart = new ApexCharts(document.querySelector("#chart"), options);
-    chart.render();
+      var chart = new ApexCharts(document.querySelector("#chart"), options);
+      chart.render();
 
+    })();
   </script>
 </body>
 
