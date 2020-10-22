@@ -9,58 +9,64 @@
 
 <body>
   <h1>mc-changes</h1>
-  <div id="links" hidden="true">
-    <a href="https://github.com/bgrins/mc-changes/">Source</a>
+  <div id="links">
+    <a href="./">Home</a>
+    <a href="./testing/">Testing Policy</a>
   </div>
 
   <div id="grid">
-    <div id="filter-container">
-      <h3>Filters</h3>
-      <label>Metabug:
-        <select name="featureMetabugs" id="featureMetabugs">
-          <option value="" selected>Choose a feature metabug</option>
-        </select>
-        <input type="text" name="metaBugID" id="metaBugID">
-      </label>
-      <hr />
-      <label>Start date (not working)<br />
-        <input id="startDate" type="date">
-      </label>
-      <label>End date (not working)<br />
-        <input id="endDate" type="date">
-      </label>
-      <hr />
-      <label>Testing Tags<br />
-        <select name="testingTags" id="testingTags" multiple>
-          <option value="testing-approved" selected>testing-approved</option>
-          <option value="testing-exception-elsewhere" selected>exception-elsewhere</option>
-          <option value="testing-exception-other" selected>exception-other</option>
-          <option value="testing-exception-ui" selected>exception-ui</option>
-          <option value="testing-exception-unchanged" selected>exception-unchanged</option>
-        </select>
-      </label>
-      <hr />
-      <label>
-        <input type="checkbox" id="riskinessEnabled">Riskiness (experimental)<br />
-      </label>
-    </div>
-    <div id="result-container">
-      <h3>Bugs</h3>
-      <table id="table" class="table table-bordered table-hover">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Bug</th>
-            <th scope="col">Testing Tags</th>
-            <th scope="col" id="riskinessColumn">Riskiness</th>
-          </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
-    </div>
+    <aside>
+      <div id="filter-container">
+        <h3>Filters</h3>
+        <label>Metabug:
+          <select name="featureMetabugs" id="featureMetabugs">
+            <option value="" selected>Choose a feature metabug</option>
+          </select>
+          <input type="text" name="metaBugID" id="metaBugID">
+        </label>
+        <hr />
+        <label>Start date (not working)<br />
+          <input id="startDate" type="date">
+        </label>
+        <label>End date (not working)<br />
+          <input id="endDate" type="date">
+        </label>
+        <hr />
+        <label>Testing Tags<br />
+          <select name="testingTags" id="testingTags" multiple>
+            <option value="testing-approved" selected>testing-approved</option>
+            <option value="testing-exception-elsewhere" selected>exception-elsewhere</option>
+            <option value="testing-exception-other" selected>exception-other</option>
+            <option value="testing-exception-ui" selected>exception-ui</option>
+            <option value="testing-exception-unchanged" selected>exception-unchanged</option>
+          </select>
+        </label>
+        <hr />
+        <label>
+          <input type="checkbox" id="riskinessEnabled">Riskiness (experimental)<br />
+        </label>
+      </div>
+    </aside>
+    <main>
+      <div id="result-container">
+        <h3>Bugs</h3>
+        <table id="table" class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Bug</th>
+              <th scope="col">Testing Tags</th>
+              <th scope="col" id="riskinessColumn">Riskiness</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+    </main>
   </div>
 
+  <script src="static/common.js"></script>
   <script src="static/page.js"></script>
 </body>
 

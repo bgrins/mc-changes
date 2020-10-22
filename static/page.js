@@ -4,8 +4,6 @@
 // TODO: Pull live data from https://community-tc.services.mozilla.com/api/index/v1/task/project.bugbug.landings_risk_report.latest/artifacts/public/landings_by_date.json
 // TODO: Convert the landing data into testing policy summary graph
 
-let METABUGS_URL =
-  "https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status&keywords=feature-testing-meta%2C%20&keywords_type=allwords";
 
 const HIGH_RISK_COLOR = "rgb(255, 13, 87)";
 const MEDIUM_RISK_COLOR = "darkkhaki";
@@ -46,7 +44,7 @@ async function buildMetabugsDropdown() {
     setOption("metaBugID", metabugsDropdown.value);
     rebuildTable();
   });
-  let bugs = await getMetabugs();
+  let bugs = await featureMetabugs;
   metabugsDropdown.innerHTML = `<option value="" selected>Choose a feature metabug</option>`;
   for (let bug of bugs) {
     let option = document.createElement("option");
@@ -54,12 +52,6 @@ async function buildMetabugsDropdown() {
     option.textContent = bug.summary;
     metabugsDropdown.append(option);
   }
-  console.log(bugs);
-}
-async function getMetabugs() {
-  let response = await fetch(METABUGS_URL);
-  let json = await response.json();
-  return json.bugs;
 }
 
 function getOption(name) {
@@ -155,43 +147,39 @@ function addRow(bugSummary) {
     risk_column.appendChild(riskText);
   }
 }
-function buildTable() {
-  fetch("data/date_landings.json", { cache: "no-store" })
-    .then((response) => response.json())
-    .then((data) => {
-      let metaBugID = getOption("metaBugID");
-      let testingTags = getOption("testingTags");
 
-      let bugSummaries = [].concat.apply([], Object.values(data));
-      if (metaBugID) {
-        bugSummaries = bugSummaries.filter((bugSummary) =>
-          bugSummary["meta_ids"].includes(Number(metaBugID))
-        );
-      }
+async function buildTable() {
+  let data = await landingsData;
+  let metaBugID = getOption("metaBugID");
+  let testingTags = getOption("testingTags");
 
-      if (testingTags) {
-        console.log(testingTags);
-        bugSummaries = bugSummaries.filter((bugSummary) =>
-          bugSummary["testing"].some((tag) => testingTags.includes(tag))
-        );
-      }
+  let bugSummaries = [].concat.apply([], Object.values(data));
+  if (metaBugID) {
+    bugSummaries = bugSummaries.filter((bugSummary) =>
+      bugSummary["meta_ids"].includes(Number(metaBugID))
+    );
+  }
 
-      bugSummaries.sort(
-        (bugSummary1, bugSummary2) => bugSummary2["risk"] - bugSummary1["risk"]
-      );
+  if (testingTags) {
+    console.log(testingTags);
+    bugSummaries = bugSummaries.filter((bugSummary) =>
+      bugSummary["testing"].some((tag) => testingTags.includes(tag))
+    );
+  }
 
-      if (getOption("riskinessEnabled")) {
-        document
-          .getElementById("riskinessColumn")
-          .style.removeProperty("display");
-      } else {
-        document.getElementById("riskinessColumn").style.display = "none";
-      }
+  bugSummaries.sort(
+    (bugSummary1, bugSummary2) => bugSummary2["risk"] - bugSummary1["risk"]
+  );
 
-      for (let bugSummary of bugSummaries) {
-        addRow(bugSummary);
-      }
-    });
+  if (getOption("riskinessEnabled")) {
+    document.getElementById("riskinessColumn").style.removeProperty("display");
+  } else {
+    document.getElementById("riskinessColumn").style.display = "none";
+  }
+
+  for (let bugSummary of bugSummaries) {
+    addRow(bugSummary);
+  }
 }
 
 function rebuildTable() {

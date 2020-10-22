@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>testing policy - mc-changes</title>
+  <link href='../static/page.css' rel='stylesheet' type='text/css'>
+  <link href='../static/areweyet/apexcharts.css' rel='stylesheet' type='text/css'>
+</head>
+
+<body>
+  <h1>Testing Policy</h1>
+  <div id="links">
+    <a href="../">Home</a>
+    <a href="./">Testing Policy</a>
+  </div>
+
+  <div id="grid">
+    <aside></aside>
+    <main>
+      <div id="chart"></div>
+    </main>
+  </div>
+
+  <script src="../static/areweyet/apexcharts.js"></script>
+  <script src="../static/proposal-temporal.js"></script>
+  <script src="../static/common.js"></script>
+  <script>
+    (async function() {
+      let summaryData = await getTestingPolicySummaryData();
+      console.log(summaryData)
+    })();
+    var options = {
+      series: [
+        {
+          name: "testing-approved",
+          data: [10, 41, 35, 51, 49, 62, 69, 91, 148],
+        },
+        {
+          name: "testing-exception-unchanged",
+          data: [1, 10, 40, 50, 49, 50, 75, 50, 10],
+        },
+        {
+          name: "no testing data",
+          data: [40, 41, 35, 10, 9, 8, 7, 2, 1],
+        },
+      ],
+      chart: {
+        height: 350,
+        type: "line",
+        zoom: {
+          enabled: false,
+        },
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      stroke: {
+        curve: "straight",
+      },
+      // title: {
+      //   text: "Product Trends by Month",
+      //   align: "left",
+      // },
+      grid: {
+        row: {
+          colors: ["#f3f3f3", "transparent"], // takes an array which will be repeated on columns
+          opacity: 0.5,
+        },
+      },
+      xaxis: {
+        categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"],
+      },
+    };
+
+    var chart = new ApexCharts(document.querySelector("#chart"), options);
+    chart.render();
+
+  </script>
+</body>
+
+</html>
