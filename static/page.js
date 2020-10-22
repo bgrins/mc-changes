@@ -11,6 +11,34 @@ let options = {
   },
 };
 
+let METABUGS_URL = "https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status&keywords=feature-testing-meta%2C%20&keywords_type=allwords";
+
+
+let metabugsDropdown = document.querySelector("#featureMetabugs");
+
+// TODO: port this to an option probably
+async function buildMetabugsDropdown() {
+  metabugsDropdown.addEventListener("change", () => {
+    setOption("metaBugID", metabugsDropdown.value);
+    rebuildTable();
+  });
+  let bugs = await getMetabugs();
+  metabugsDropdown.innerHTML = `<option value="" selected>Choose a feature metabug</option>`;
+  for (let bug of bugs) {
+    let option = document.createElement("option");
+    option.setAttribute("value", bug.id);
+    option.textContent = bug.summary;
+    metabugsDropdown.append(option);
+  }
+  console.log(bugs);
+}
+async function getMetabugs() {
+  let response = await fetch(METABUGS_URL);
+  let json = await response.json();
+  return json.bugs;
+}
+buildMetabugsDropdown();
+
 function getOption(name) {
   return options[name].value;
 }

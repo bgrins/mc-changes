@@ -1,4 +1,8 @@
 @import url("./areweyet/common.css");
+
+* {
+  box-sizing: border-box;
+}
 /* 
 table {
 } */
@@ -17,4 +21,34 @@ tr {
 td .desc-box {
   width: auto;
   padding-bottom: 5px;
+}
+
+#links {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+}
+
+#grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+}
+
+h3 {
+  margin: 0;
+  border-bottom: solid 1px rgba(0, 0, 0, .2);
+}
+
+body {
+  padding: 0 5px;
+}
+#filter-container input,
+#filter-container select {
+  width: 180px;
+  display: block;
+  margin: 2px 0;
+  padding: 0;
+}
+#filter-container label {
+  font-style: italic;
 }

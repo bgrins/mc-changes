@@ -2,32 +2,60 @@
 <html>
 
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
   <title>mc-changes</title>
-  <link rel="stylesheet" href="static/page.css">
+  <link href='./static/page.css' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
-  <input type="text" name="metaBugID" id="metaBugID" placeholder="Meta bug ID...">
-  <select name="testingTags" id="testingTags" multiple>
-    <option value="testing-approved" selected>testing-approved</option>
-    <option value="testing-exception-elsewhere" selected>testing-exception-elsewhere</option>
-    <option value="testing-exception-other" selected>testing-exception-other</option>
-    <option value="testing-exception-ui" selected>testing-exception-ui</option>
-    <option value="testing-exception-unchanged" selected>testing-exception-unchanged</option>
-  </select>
-  <table id="table" class="table table-bordered table-hover">
-    <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">Bug</th>
-        <th scope="col">Testing Tags</th>
-        <th scope="col" id="riskinessColumn">Riskiness</th>
-      </tr>
-    </thead>
-    <tbody>
-    </tbody>
-  </table>
+  <h1>mc-changes</h1>
+  <div id="links" hidden="true">
+    <a href="https://github.com/bgrins/mc-changes/">Source</a>
+  </div>
+
+  <div id="grid">
+    <div id="filter-container">
+      <h3>Filters</h3>
+      <label>Metabug:
+        <select name="featureMetabugs" id="featureMetabugs">
+          <option value="" selected>Choose a feature metabug</option>
+        </select>
+        <input type="text" name="metaBugID" id="metaBugID">
+      </label>
+      <hr />
+      <label>Start date (not working)<br />
+        <input type="date">
+      </label>
+      <label>End date (not working)<br />
+        <input type="date">
+      </label>
+      <hr />
+      <label>Testing Tags<br />
+        <select name="testingTags" id="testingTags" multiple>
+          <option value="testing-approved" selected>testing-approved</option>
+          <option value="testing-exception-elsewhere" selected>exception-elsewhere</option>
+          <option value="testing-exception-other" selected>exception-other</option>
+          <option value="testing-exception-ui" selected>exception-ui</option>
+          <option value="testing-exception-unchanged" selected>exception-unchanged</option>
+        </select>
+      </label>
+    </div>
+    <div id="result-container">
+      <h3>Bugs</h3>
+      <table id="table" class="table table-bordered table-hover">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Bug</th>
+            <th scope="col">Testing Tags</th>
+            <th scope="col" id="riskinessColumn">Riskiness</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
   <script src="static/page.js"></script>
 </body>
