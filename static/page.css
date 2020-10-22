@@ -42,7 +42,7 @@ h3 {
 body {
   padding: 0 5px;
 }
-#filter-container input,
+#filter-container input:not([type=checkbox]),
 #filter-container select {
   width: 180px;
   display: block;
