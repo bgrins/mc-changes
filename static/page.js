@@ -1,6 +1,8 @@
 // TODO: Add filter on dates - see getOption("startDate") and getOption("endDate")
 // TODO: On click, show previous components affected by similar patches.
 // TODO: On click, show previous bugs caused by similar patches.
+// TODO: Pull live data from https://community-tc.services.mozilla.com/api/index/v1/task/project.bugbug.landings_risk_report.latest/artifacts/public/landings_by_date.json
+// TODO: Convert the landing data into testing policy summary graph
 
 let METABUGS_URL =
   "https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status&keywords=feature-testing-meta%2C%20&keywords_type=allwords";
