@@ -4,7 +4,6 @@
 // TODO: Pull live data from https://community-tc.services.mozilla.com/api/index/v1/task/project.bugbug.landings_risk_report.latest/artifacts/public/landings_by_date.json
 // TODO: Convert the landing data into testing policy summary graph
 
-
 const HIGH_RISK_COLOR = "rgb(255, 13, 87)";
 const MEDIUM_RISK_COLOR = "darkkhaki";
 const LOW_RISK_COLOR = "green";
@@ -124,7 +123,11 @@ function addRow(bugSummary) {
             <li>Bug 7 - Search doesn"t work anymore <span style="background-color:gold;color:yellow;">STR</span></li>
           </ul>*/
 
-  let testing_tags_column = row.insertCell(2);
+  let date_column = row.insertCell(2);
+  date_column.textContent = bugSummary.date;
+
+  let testing_tags_column = row.insertCell(3);
+  testing_tags_column.classList.add("testing-tags")
   let testing_tags_list = document.createElement("ul");
   for (let testing_tag of bugSummary["testing"]) {
     let testing_tags_list_item = document.createElement("li");
@@ -134,7 +137,7 @@ function addRow(bugSummary) {
   testing_tags_column.appendChild(testing_tags_list);
 
   if (getOption("riskinessEnabled")) {
-    let risk_column = row.insertCell(3);
+    let risk_column = row.insertCell(4);
     let riskText = document.createElement("span");
     riskText.textContent = Math.round(100 * bugSummary["risk"]);
     if (bugSummary["risk"] > 0.8) {
@@ -161,17 +164,16 @@ async function buildTable() {
   }
 
   if (testingTags) {
-    console.log(testingTags);
     bugSummaries = bugSummaries.filter((bugSummary) =>
       bugSummary["testing"].some((tag) => testingTags.includes(tag))
     );
   }
 
-  bugSummaries.sort(
-    (bugSummary1, bugSummary2) => bugSummary2["risk"] - bugSummary1["risk"]
-  );
-
+  bugSummaries.reverse();
   if (getOption("riskinessEnabled")) {
+    // bugSummaries.sort(
+    //   (bugSummary1, bugSummary2) => bugSummary2["risk"] - bugSummary1["risk"]
+    // );
     document.getElementById("riskinessColumn").style.removeProperty("display");
   } else {
     document.getElementById("riskinessColumn").style.display = "none";

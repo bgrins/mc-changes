@@ -9,8 +9,10 @@ table {
 th, td {
   vertical-align: top;
 }
-td ul {
+.testing-tags ul {
   margin: 0;
+  padding: 0;
+  list-style: none;
   white-space: nowrap; /* XXX do this for a class on testing tag instead */
 }
 tr {
@@ -20,7 +22,11 @@ tr {
 
 td .desc-box {
   width: auto;
-  padding-bottom: 5px;
+  padding: 3px;
+}
+td .desc-box ul {
+  margin: 0;
+  padding-inline-start: 20px;
 }
 
 #links {

@@ -26,13 +26,10 @@ let featureMetabugs = (async function () {
 let landingsData = (async function () {
   let response = await fetch(LANDINGS_URL, { cache: "no-store" });
   let json = await response.json();
-  return json;
-})();
 
-async function getTestingPolicySummaryData(grouping = "daily") {
-  let data = await landingsData;
+  // Sort the dates so object iteration will be sequential:
   let orderedDates = [];
-  for (let date in data) {
+  for (let date in json) {
     orderedDates.push(date);
   }
   orderedDates.sort((a, b) => {
@@ -42,33 +39,41 @@ async function getTestingPolicySummaryData(grouping = "daily") {
     );
   });
 
-  // TODO:
-
-  // if (grouping == "daily") {
-
-  // } else if (grouping == "weekly") {
-
-  // } else if (grouping == "monthly") {
-
-  // }
-
-  let returnedData = {};
+  let returnedObject = {};
   for (let date of orderedDates) {
+    returnedObject[date] = json[date];
+  }
+
+  return returnedObject;
+})();
+
+function getNewTestingTagCountObject() {
+  let obj = {};
+  for (let tag in TESTING_TAGS) {
+    obj[tag] = 0;
+  }
+  return obj;
+}
+
+async function getTestingPolicySummaryData(grouping = "daily") {
+  let data = await landingsData;
+
+  console.log(data);
+
+  let dailyData = {};
+  for (let date in data) {
     // Ignore data before the testing policy took place.
     if (
       temporal.Temporal.Date.compare(
         temporal.Temporal.Date.from(date),
-        // temporal.Temporal.Date.from("2020-09-15") Once we get the historical data
-        temporal.Temporal.Date.from("2020-10-16")
+        temporal.Temporal.Date.from("2020-09-15") // Once we get the historical data
+        // temporal.Temporal.Date.from("2020-10-16")
       ) < 1
     ) {
       continue;
     }
 
-    let returnedDataForDate = {};
-    for (let tag in TESTING_TAGS) {
-      returnedDataForDate[tag] = 0;
-    }
+    let returnedDataForDate = getNewTestingTagCountObject();
 
     let originalData = data[date];
     for (let bug of originalData) {
@@ -77,7 +82,26 @@ async function getTestingPolicySummaryData(grouping = "daily") {
       }
     }
 
-    returnedData[date] = returnedDataForDate;
+    dailyData[date] = returnedDataForDate;
+  }
+
+
+  // TODO:
+  if (grouping == "weekly") {
+    let weeklyData = {};
+    for (let daily in dailyData) {
+      let date = temporal.Temporal.Date.from(daily);
+      let weekStart = date.minus({ days: date.dayOfWeek }).toString();
+
+      if (!weeklyData[weekStart]) {
+        weeklyData[weekStart] = getNewTestingTagCountObject();
+      }
+
+      weeklyData[weekStart.toString()] = getNewTestingTagCountObject();
+      // console.log(date, date.weekOfYear, date.year, date.dayOfWeek);
+    }
+  } else if (grouping == "monthly") {
+    // .toYearMonth()
   }
 
   // If grouping by week:
@@ -85,5 +109,5 @@ async function getTestingPolicySummaryData(grouping = "daily") {
   // foo.weekOfYear
   // foo.year
 
-  return returnedData;
+  return dailyData;
 }
