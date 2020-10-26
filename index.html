@@ -48,8 +48,14 @@
       </div>
     </aside>
     <main>
-      <div id="result-container">
-        <h3>Bugs</h3>
+      <details open>
+        <summary><h3>Summary</h3></summary>
+        <div id="result-summary"></div>
+      </details>
+      <details open>
+        <summary><h3>Bugs</h3></summary>
+
+        <table id="datatable"></table>
         <table id="table" class="table table-bordered table-hover">
           <thead>
             <tr>
@@ -63,10 +69,11 @@
           <tbody>
           </tbody>
         </table>
-      </div>
+      </details>
     </main>
   </div>
 
+  <script src="static/areweyet/apexcharts.js"></script>
   <script src="static/proposal-temporal.js"></script>
   <script src="static/common.js"></script>
   <script src="static/page.js"></script>

@@ -33,7 +33,7 @@ let options = {
 if (new URLSearchParams(window.location.search).has("riskiness")) {
   document.querySelector("#riskinessEnabled").checked = true;
 }
-
+let resultSummary = document.getElementById("result-summary");
 let metabugsDropdown = document.querySelector("#featureMetabugs");
 
 // TODO: port this to an option maybe
@@ -150,6 +150,91 @@ function addRow(bugSummary) {
   }
 }
 
+function renderTestingSummary(bugSummaries) {
+  let metaBugID = getOption("metaBugID");
+  let changesets = bugSummaries
+    .map((summary) => summary.testing.length)
+    .reduce((a, b) => a + b);
+
+  let testingCounts = getNewTestingTagCountObject();
+  testingCounts["none"] = 0;
+  bugSummaries.forEach((summary) => {
+    summary.testing.forEach((tag) => {
+      tag = testingCounts.hasOwnProperty(tag) ? tag : "none";
+      testingCounts[tag] = testingCounts[tag] + 1;
+    });
+  });
+
+  let bugText = metaBugID ? `For bug ${metaBugID}: ` : ``;
+  let summaryText = `${bugText}There are ${
+    bugSummaries.length
+  } bugs with ${changesets} changesets.`;
+  resultSummary.textContent = summaryText;
+
+  // let pre = document.createElement("pre");
+  // pre.textContent = `${JSON.stringify(
+  //   testingCounts
+  // )}`;
+  // resultSummary.append(pre);
+
+  let categories = [];
+  let colors = [];
+  let data = [];
+  for (let tag in testingCounts) {
+    categories.push(tag.split("-")[tag.split("-").length - 1]);
+    data.push(testingCounts[tag]);
+    colors.push(TESTING_TAGS[tag]);
+  }
+
+  var options = {
+    series: [
+      {
+        name: "Tags",
+        data,
+      },
+    ],
+    chart: {
+      height: 150,
+      type: "bar",
+    },
+    plotOptions: {
+      bar: {
+        dataLabels: {
+          position: "top", // top, center, bottom
+        },
+      },
+    },
+
+    xaxis: {
+      categories,
+      // position: "bottom",
+      axisBorder: {
+        show: false,
+      },
+      axisTicks: {
+        show: false,
+      },
+    },
+    yaxis: {
+      axisBorder: {
+        show: false,
+      },
+      axisTicks: {
+        show: false,
+      },
+      labels: {
+        show: false,
+      },
+    },
+  };
+
+  let chartEl = document.createElement("div");
+  resultSummary.append(chartEl);
+
+  var chart = new ApexCharts(chartEl, options);
+  chart.render();
+}
+
 async function buildTable() {
   let data = await landingsData;
   let metaBugID = getOption("metaBugID");
@@ -204,6 +289,8 @@ async function buildTable() {
     document.getElementById("riskinessColumn").style.display = "none";
   }
 
+  renderTestingSummary(bugSummaries);
+
   for (let bugSummary of bugSummaries) {
     addRow(bugSummary);
   }
@@ -211,6 +298,8 @@ async function buildTable() {
 
 function rebuildTable() {
   let table = document.getElementById("table");
+  let summary = resultSummary;
+  summary.textContent = "";
 
   while (table.rows.length > 1) {
     table.deleteRow(table.rows.length - 1);
