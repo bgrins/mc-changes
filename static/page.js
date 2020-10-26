@@ -1,4 +1,3 @@
-// TODO: Add filter on dates - see getOption("startDate") and getOption("endDate")
 // TODO: On click, show previous components affected by similar patches.
 // TODO: On click, show previous bugs caused by similar patches.
 // TODO: Pull live data from https://community-tc.services.mozilla.com/api/index/v1/task/project.bugbug.landings_risk_report.latest/artifacts/public/landings_by_date.json
@@ -127,7 +126,7 @@ function addRow(bugSummary) {
   date_column.textContent = bugSummary.date;
 
   let testing_tags_column = row.insertCell(3);
-  testing_tags_column.classList.add("testing-tags")
+  testing_tags_column.classList.add("testing-tags");
   let testing_tags_list = document.createElement("ul");
   for (let testing_tag of bugSummary["testing"]) {
     let testing_tags_list_item = document.createElement("li");
@@ -161,6 +160,32 @@ async function buildTable() {
     bugSummaries = bugSummaries.filter((bugSummary) =>
       bugSummary["meta_ids"].includes(Number(metaBugID))
     );
+  }
+
+  let startDate = getOption("startDate");
+  if (startDate) {
+    startDate = temporal.Temporal.Date.from(startDate);
+    bugSummaries = bugSummaries.filter((bugSummary) => {
+      return (
+        temporal.Temporal.Date.compare(
+          temporal.Temporal.Date.from(bugSummary.date),
+          startDate
+        ) >= 0
+      );
+    });
+  }
+
+  let endDate = getOption("endDate");
+  if (endDate) {
+    endDate = temporal.Temporal.Date.from(endDate);
+    bugSummaries = bugSummaries.filter((bugSummary) => {
+      return (
+        temporal.Temporal.Date.compare(
+          temporal.Temporal.Date.from(bugSummary.date),
+          endDate
+        ) <= 0
+      );
+    });
   }
 
   if (testingTags) {
@@ -203,11 +228,10 @@ function rebuildTable() {
 
     if (optionType === "text") {
       setOption(optionName, elem.value);
-
-      elem.onchange = function () {
+      elem.addEventListener("change", function () {
         setOption(optionName, elem.value);
         rebuildTable();
-      };
+      });
     } else if (optionType === "checkbox") {
       setOption(optionName, elem.checked);
 
