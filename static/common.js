@@ -71,7 +71,8 @@ let taskclusterLandingsArtifact = (async function () {
   if (!json) {
     let response = await fetch(LANDINGS_URL);
     json = await response.json();
-    EXPIRE_CACHE.set("taskclusterLandingsArtifact", json, 60 * 10);
+    // 30 minutes
+    EXPIRE_CACHE.set("taskclusterLandingsArtifact", json, 60 * 30);
   } else {
     console.log("cache hit", json);
   }
@@ -121,7 +122,7 @@ function getNewTestingTagCountObject() {
 async function getTestingPolicySummaryData(grouping = "daily") {
   let data = await landingsData;
 
-  console.log(data);
+  // console.log(data);
 
   let dailyData = {};
   for (let date in data) {
@@ -155,7 +156,6 @@ async function getTestingPolicySummaryData(grouping = "daily") {
     dailyData[date] = returnedDataForDate;
   }
 
-  // TODO:
   if (grouping == "weekly") {
     let weeklyData = {};
     for (let daily in dailyData) {
@@ -166,9 +166,17 @@ async function getTestingPolicySummaryData(grouping = "daily") {
         weeklyData[weekStart] = getNewTestingTagCountObject();
       }
 
-      weeklyData[weekStart.toString()] = getNewTestingTagCountObject();
+      for (let tag in dailyData[daily]) {
+        weeklyData[weekStart][tag] += dailyData[daily][tag];
+      }
+
+      // weeklyData[weekStart.toString()] = getNewTestingTagCountObject();
+
       // console.log(date, date.weekOfYear, date.year, date.dayOfWeek);
     }
+
+    console.log("Returning weekly", weeklyData);
+    return weeklyData;
   } else if (grouping == "monthly") {
     // .toYearMonth()
   }

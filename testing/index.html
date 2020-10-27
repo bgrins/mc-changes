@@ -17,12 +17,11 @@
   <div class="loader"></div>
   <div id="grid">
     <aside>
-      <h3>Filters</h3>
-      <em>(not implemented)</em>
+      <h3>Controls</h3>
       <ul>
         <li><label><input name="grouping" type="radio" value="daily" checked />Daily</label></li>
         <li><label><input name="grouping" type="radio" value="weekly" />Weekly</label></li>
-        <li><label><input name="grouping" type="radio" value="monthly" />Monthly</label></li>
+        <!-- <li><label><input name="grouping" type="radio" value="monthly" />Monthly</label></li> -->
       </ul>
     </aside>
     <main>
@@ -50,7 +49,7 @@
 
       async function rerender(grouping) {
         let summaryData = await getTestingPolicySummaryData(grouping);
-        console.log(summaryData);
+        // console.log(summaryData);
 
         let series = [];
         let colors = [];
