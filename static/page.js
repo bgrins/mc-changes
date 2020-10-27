@@ -128,10 +128,12 @@ function addRow(bugSummary) {
   let testing_tags_column = row.insertCell(3);
   testing_tags_column.classList.add("testing-tags");
   let testing_tags_list = document.createElement("ul");
-  for (let testing_tag of bugSummary["testing"]) {
-    let testing_tags_list_item = document.createElement("li");
-    testing_tags_list_item.appendChild(document.createTextNode(testing_tag));
-    testing_tags_list.appendChild(testing_tags_list_item);
+  for (let commit of bugSummary.commits) {
+    for (let testing_tag of commit.testing || []) {
+      let testing_tags_list_item = document.createElement("li");
+      testing_tags_list_item.appendChild(document.createTextNode(testing_tag));
+      testing_tags_list.appendChild(testing_tags_list_item);
+    }
   }
   testing_tags_column.appendChild(testing_tags_list);
 
@@ -153,22 +155,23 @@ function addRow(bugSummary) {
 function renderTestingSummary(bugSummaries) {
   let metaBugID = getOption("metaBugID");
   let changesets = bugSummaries
-    .map((summary) => summary.testing.length)
+    .map((summary) => summary.commits)
+    .map((commit) => (commit.testing ? commit.testing.length : 0))
     .reduce((a, b) => a + b);
 
   let testingCounts = getNewTestingTagCountObject();
   testingCounts["none"] = 0;
   bugSummaries.forEach((summary) => {
-    summary.testing.forEach((tag) => {
-      tag = testingCounts.hasOwnProperty(tag) ? tag : "none";
-      testingCounts[tag] = testingCounts[tag] + 1;
+    summary.commits.forEach((commit) => {
+      (commit.testing || []).forEach((tag) => {
+        tag = testingCounts.hasOwnProperty(tag) ? tag : "none";
+        testingCounts[tag] = testingCounts[tag] + 1;
+      });
     });
   });
 
   let bugText = metaBugID ? `For bug ${metaBugID}: ` : ``;
-  let summaryText = `${bugText}There are ${
-    bugSummaries.length
-  } bugs with ${changesets} changesets.`;
+  let summaryText = `${bugText}There are ${bugSummaries.length} bugs with ${changesets} changesets.`;
   resultSummary.textContent = summaryText;
 
   // let pre = document.createElement("pre");
@@ -275,7 +278,12 @@ async function buildTable() {
 
   if (testingTags) {
     bugSummaries = bugSummaries.filter((bugSummary) =>
-      bugSummary["testing"].some((tag) => testingTags.includes(tag))
+      bugSummary.commits.some((commit) => {
+        return (
+          commit.testing &&
+          commit.testing.some((tag) => testingTags.includes(tag))
+        );
+      })
     );
   }
 

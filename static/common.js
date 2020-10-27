@@ -25,7 +25,7 @@ let taskclusterLandingsArtifact = (async function () {
 
 let featureMetabugs = (async function () {
   let json = await taskclusterLandingsArtifact;
-  return json.featureMetabugs;
+  return json.featureMetaBugs;
 })();
 
 let landingsData = (async function () {
