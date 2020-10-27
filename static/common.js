@@ -9,36 +9,73 @@ function getCSSVariableValue(name) {
     .trim();
 }
 
+const EXPIRE_CACHE = (() => {
+  localforage.config({
+    driver: localforage.INDEXEDDB,
+  });
+  return {
+    get: async (key) => {
+      let data;
+      try {
+        data = await localforage.getItem(key);
+      } catch (e) {}
+
+      if (!data) return data;
+
+      const { expire, value } = data;
+
+      if (expire < Date.now()) {
+        localforage.removeItem(key);
+        return null;
+      }
+
+      return value;
+    },
+    set: (key, value, expire = false, callback = false) => {
+      if (expire && typeof expire === "number")
+        expire = Math.round(expire * 1000 + Date.now()); // * 1000 to use seconds
+
+      return localforage.setItem(key, { value, expire }, expire && callback);
+    },
+  };
+})();
 let TESTING_TAGS = {
   "testing-approved": {
     color: getCSSVariableValue("--green-60"),
-    label: "approved"
+    label: "approved",
   },
   "testing-exception-unchanged": {
     color: getCSSVariableValue("--yellow-50"),
-    label: "unchanged"
+    label: "unchanged",
   },
   "testing-exception-elsewhere": {
     color: getCSSVariableValue("--blue-50"),
-    label: "elsewhere"
+    label: "elsewhere",
   },
   "testing-exception-ui": {
     color: getCSSVariableValue("--purple-50"),
-    label: "ui"
+    label: "ui",
   },
   "testing-exception-other": {
     color: getCSSVariableValue("--red-50"),
-    label: "other"
+    label: "other",
   },
-  "missing": {
+  missing: {
     color: getCSSVariableValue("--red-80"),
-    label: "missing"
+    label: "missing",
   },
 };
 
 let taskclusterLandingsArtifact = (async function () {
-  let response = await fetch(LANDINGS_URL);
-  let json = await response.json();
+  let json = await EXPIRE_CACHE.get("taskclusterLandingsArtifact");
+  if (!json) {
+    let response = await fetch(LANDINGS_URL);
+    json = await response.json();
+    EXPIRE_CACHE.set("taskclusterLandingsArtifact", json, 60 * 10);
+  } else {
+    console.log("cache hit", json);
+  }
+
   return json;
 })();
 

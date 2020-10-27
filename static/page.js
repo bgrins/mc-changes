@@ -70,18 +70,16 @@ function addRow(bugSummary) {
   let row = table.insertRow(table.rows.length);
 
   let num_column = document.createElement("td");
-  num_column.appendChild(document.createTextNode(table.rows.length - 1));
-  row.appendChild(num_column);
+  num_column.append(document.createTextNode(table.rows.length - 1));
+  row.append(num_column);
 
   let bug_column = row.insertCell(1);
   let bug_link = document.createElement("a");
   bug_link.textContent = `Bug ${bugSummary["id"]}`;
   bug_link.href = `https://bugzilla.mozilla.org/show_bug.cgi?id=${bugSummary["id"]}`;
   bug_link.target = "_blank";
-  bug_column.appendChild(bug_link);
-  bug_column.appendChild(
-    document.createTextNode(` - ${bugSummary["summary"]}`)
-  );
+  bug_column.append(bug_link);
+  bug_column.append(document.createTextNode(` - ${bugSummary["summary"]}`));
 
   let components_percentages = Object.entries(
     bugSummary["most_common_regression_components"]
@@ -94,20 +92,20 @@ function addRow(bugSummary) {
       ([component1, percentage1], [component2, percentage2]) =>
         percentage2 - percentage1
     );
-    component_container.appendChild(
+    component_container.append(
       document.createTextNode("Most common regression components:")
     );
     let component_list = document.createElement("ul");
     for (let [component, percentage] of components_percentages.slice(0, 3)) {
       let component_list_item = document.createElement("li");
-      component_list_item.appendChild(
+      component_list_item.append(
         document.createTextNode(
           `${component} - ${Math.round(100 * percentage)}%`
         )
       );
-      component_list.appendChild(component_list_item);
+      component_list.append(component_list_item);
     }
-    component_container.appendChild(component_list);
+    component_container.append(component_list);
   }
 
   /*<hr>
@@ -130,30 +128,36 @@ function addRow(bugSummary) {
   for (let commit of bugSummary.commits) {
     for (let testing_tag of commit.testing || []) {
       let testing_tags_list_item = document.createElement("li");
-      testing_tags_list_item.appendChild(
+      testing_tags_list_item.append(
         document.createTextNode(TESTING_TAGS[testing_tag].label)
       );
-      testing_tags_list.appendChild(testing_tags_list_item);
+      testing_tags_list.append(testing_tags_list_item);
     }
   }
-  testing_tags_column.appendChild(testing_tags_list);
+  testing_tags_column.append(testing_tags_list);
 
   if (getOption("riskinessEnabled")) {
+    let risk_list = document.createElement("ul");
     let risk_column = row.insertCell(4);
-    let riskText = document.createElement("span");
-    let maxRisk = Math.max.apply(
-      null,
-      bugSummary.commits.map((c) => c.risk)
-    );
-    riskText.textContent = Math.round(100 * maxRisk);
-    if (maxRisk > 0.8) {
-      riskText.style.color = HIGH_RISK_COLOR;
-    } else if (maxRisk > 0.5) {
-      riskText.style.color = MEDIUM_RISK_COLOR;
-    } else {
-      riskText.style.color = LOW_RISK_COLOR;
+
+    for (let commit of bugSummary.commits) {
+      let risk = commit.risk;
+      let risk_list_item = document.createElement("li");
+      let riskText = document.createElement("a");
+      riskText.setAttribute("href", `https://hg.mozilla.org/mozilla-central/rev/${commit.id}`);
+      riskText.setAttribute("target", "_blank");
+      riskText.textContent = Math.round(100 * risk);
+      if (risk > 0.8) {
+        riskText.style.color = HIGH_RISK_COLOR;
+      } else if (risk > 0.5) {
+        riskText.style.color = MEDIUM_RISK_COLOR;
+      } else {
+        riskText.style.color = LOW_RISK_COLOR;
+      }
+      risk_list_item.append(riskText);
+      risk_list.append(risk_list_item);
     }
-    risk_column.appendChild(riskText);
+    risk_column.append(risk_list);
   }
 }
 

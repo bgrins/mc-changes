@@ -8,21 +8,21 @@
 </head>
 
 <body class="loading-data">
-  <h1>mc-changes</h1>
+  <h1>mc changes</h1>
   <div id="links">
-    <a href="./">Home</a>
-    <a href="./testing/">Testing Policy</a>
+    <a href="./">Change Report</a>
+    <a href="./testing/">Testing Policy Report</a>
   </div>
   <div class="loader"></div>
   <div id="grid">
     <aside>
       <div id="filter-container">
         <h3>Filters</h3>
-        <label>Metabug:
+        <label>Metabug
           <select name="featureMetabugs" id="featureMetabugs">
             <option value="" selected>Choose a feature metabug</option>
           </select>
-          <input type="text" name="metaBugID" id="metaBugID">
+          <input type="text" name="metaBugID" id="metaBugID" placeholder="…or enter bug ID">
         </label>
         <hr />
         <label>Start date<br />
@@ -43,7 +43,7 @@
         </label>
         <hr />
         <label>
-          <input type="checkbox" id="riskinessEnabled">Riskiness (experimental)<br />
+          <input type="checkbox" id="riskinessEnabled" checked>Riskiness
         </label>
       </div>
     </aside>
@@ -74,6 +74,7 @@
   </div>
 
   <script src="static/areweyet/apexcharts.js"></script>
+  <script src="static/localforage.js"></script>
   <script src="static/proposal-temporal.js"></script>
   <script src="static/common.js"></script>
   <script src="static/page.js"></script>

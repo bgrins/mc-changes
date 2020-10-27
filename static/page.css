@@ -38,11 +38,10 @@ table tr th:nth-child(5) {
   width: 100px;
 }
 
-.testing-tags ul {
+table td ul {
   margin: 0;
   padding: 0;
   list-style: none;
-  /* white-space: nowrap; XXX do this for a class on testing tag instead */
 }
 tr {
   padding: 4px 0;
@@ -122,14 +121,14 @@ aside ul li {
 .loader,
 .loader:before,
 .loader:after {
-  background: #222;
+  background: var(--heading-color);
   -webkit-animation: load1 1s infinite ease-in-out;
   animation: load1 1s infinite ease-in-out;
   width: 1em;
   height: 4em;
 }
 .loader {
-  color: #222;
+  color: var(--heading-color);
   text-indent: -9999em;
   margin: 88px auto;
   position: relative;
