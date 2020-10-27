@@ -130,7 +130,9 @@ function addRow(bugSummary) {
   for (let commit of bugSummary.commits) {
     for (let testing_tag of commit.testing || []) {
       let testing_tags_list_item = document.createElement("li");
-      testing_tags_list_item.appendChild(document.createTextNode(TESTING_TAGS[testing_tag].label));
+      testing_tags_list_item.appendChild(
+        document.createTextNode(TESTING_TAGS[testing_tag].label)
+      );
       testing_tags_list.appendChild(testing_tags_list_item);
     }
   }
@@ -139,10 +141,14 @@ function addRow(bugSummary) {
   if (getOption("riskinessEnabled")) {
     let risk_column = row.insertCell(4);
     let riskText = document.createElement("span");
-    riskText.textContent = Math.round(100 * bugSummary["risk"]);
-    if (bugSummary["risk"] > 0.8) {
+    let maxRisk = Math.max.apply(
+      null,
+      bugSummary.commits.map((c) => c.risk)
+    );
+    riskText.textContent = Math.round(100 * maxRisk);
+    if (maxRisk > 0.8) {
       riskText.style.color = HIGH_RISK_COLOR;
-    } else if (bugSummary["risk"] > 0.5) {
+    } else if (maxRisk > 0.5) {
       riskText.style.color = MEDIUM_RISK_COLOR;
     } else {
       riskText.style.color = LOW_RISK_COLOR;

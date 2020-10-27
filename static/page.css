@@ -3,9 +3,7 @@
 * {
   box-sizing: border-box;
 }
-/* 
-table {
-} */
+
 th,
 td {
   vertical-align: top;
@@ -21,10 +19,15 @@ table th {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-align: center;
 }
 table tr td:nth-child(1),
 table tr th:nth-child(1) {
   width: 15px;
+}
+table tr td:nth-child(2),
+table tr th:nth-child(2) {
+  text-align: left;
 }
 table tr td:nth-child(3),
 table tr th:nth-child(3),
@@ -61,11 +64,6 @@ td .desc-box ul {
   top: 5px;
 }
 
-#grid {
-  display: grid;
-  grid-template-columns: auto 1fr;
-}
-
 h3 {
   margin: 0;
   border-bottom: solid 1px rgba(0, 0, 0, 0.2);
@@ -79,6 +77,8 @@ details summary {
 }
 
 #grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
   padding: 0 5px;
   max-width: 100vw;
   overflow: hidden;
@@ -89,6 +89,7 @@ details summary {
 #grid main {
   overflow: auto;
 }
+
 #filter-container input:not([type="checkbox"]),
 #filter-container select {
   width: 180px;
