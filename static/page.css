@@ -23,7 +23,7 @@ table th {
 }
 table tr td:nth-child(1),
 table tr th:nth-child(1) {
-  width: 15px;
+  width: 3em;
 }
 table tr td:nth-child(2),
 table tr th:nth-child(2) {

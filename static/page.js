@@ -126,13 +126,17 @@ function addRow(bugSummary) {
   testing_tags_column.classList.add("testing-tags");
   let testing_tags_list = document.createElement("ul");
   for (let commit of bugSummary.commits) {
-    for (let testing_tag of commit.testing || []) {
-      let testing_tags_list_item = document.createElement("li");
-      testing_tags_list_item.append(
-        document.createTextNode(TESTING_TAGS[testing_tag].label)
-      );
-      testing_tags_list.append(testing_tags_list_item);
+    let testing_tags_list_item = document.createElement("li");
+    if (!commit.testing || commit.testing.length == 0) {
+      testing_tags_list_item.append(document.createTextNode("missing"));
+    } else {
+      for (let testing_tag of commit.testing) {
+        testing_tags_list_item.append(
+          document.createTextNode(TESTING_TAGS[testing_tag].label)
+        );
+      }
     }
+    testing_tags_list.append(testing_tags_list_item);
   }
   testing_tags_column.append(testing_tags_list);
 
@@ -144,7 +148,10 @@ function addRow(bugSummary) {
       let risk = commit.risk;
       let risk_list_item = document.createElement("li");
       let riskText = document.createElement("a");
-      riskText.setAttribute("href", `https://hg.mozilla.org/mozilla-central/rev/${commit.id}`);
+      riskText.setAttribute(
+        "href",
+        `https://hg.mozilla.org/mozilla-central/rev/${commit.id}`
+      );
       riskText.setAttribute("target", "_blank");
       riskText.textContent = Math.round(100 * risk);
       if (risk > 0.8) {
