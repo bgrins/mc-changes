@@ -8,13 +8,13 @@
   <link href='../static/areweyet/apexcharts.css' rel='stylesheet' type='text/css'>
 </head>
 
-<body>
+<body class="loading-data">
   <h1>Testing Policy</h1>
   <div id="links">
     <a href="../">Home</a>
     <a href="./">Testing Policy</a>
   </div>
-
+  <div class="loader"></div>
   <div id="grid">
     <aside>
       <h3>Filters</h3>
@@ -54,8 +54,8 @@
         let series = [];
         let colors = [];
         for (let tag in TESTING_TAGS) {
-          series.push({ name: tag, data: [] });
-          colors.push(TESTING_TAGS[tag]);
+          series.push({ name: TESTING_TAGS[tag].label, data: [] });
+          colors.push(TESTING_TAGS[tag].color);
         }
 
         let xaxisCategories = [];

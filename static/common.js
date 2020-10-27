@@ -10,11 +10,30 @@ function getCSSVariableValue(name) {
 }
 
 let TESTING_TAGS = {
-  "testing-approved": getCSSVariableValue("--green-60"),
-  "testing-exception-elsewhere": getCSSVariableValue("--blue-50"),
-  "testing-exception-ui": getCSSVariableValue("--purple-50"),
-  "testing-exception-unchanged": getCSSVariableValue("--yellow-50"),
-  "testing-exception-other": getCSSVariableValue("--red-50"),
+  "testing-approved": {
+    color: getCSSVariableValue("--green-60"),
+    label: "approved"
+  },
+  "testing-exception-unchanged": {
+    color: getCSSVariableValue("--yellow-50"),
+    label: "unchanged"
+  },
+  "testing-exception-elsewhere": {
+    color: getCSSVariableValue("--blue-50"),
+    label: "elsewhere"
+  },
+  "testing-exception-ui": {
+    color: getCSSVariableValue("--purple-50"),
+    label: "ui"
+  },
+  "testing-exception-other": {
+    color: getCSSVariableValue("--red-50"),
+    label: "other"
+  },
+  "missing": {
+    color: getCSSVariableValue("--red-80"),
+    label: "missing"
+  },
 };
 
 let taskclusterLandingsArtifact = (async function () {
@@ -48,6 +67,8 @@ let landingsData = (async function () {
   for (let date of orderedDates) {
     returnedObject[date] = json[date];
   }
+
+  document.body.classList.remove("loading-data");
 
   return returnedObject;
 })();
@@ -83,9 +104,9 @@ async function getTestingPolicySummaryData(grouping = "daily") {
     let originalData = data[date];
     for (let bug of originalData) {
       for (let commit of bug.commits) {
-        if (!commit.testing) {
-          // returnedDataForDate["Missing"]
-          // console.log(commit, date, bug);
+        if (!commit.testing || !commit.testing.length) {
+          // XXX distinguish between unknown and missing
+          returnedDataForDate.missing++;
         } else {
           for (let tag of commit.testing) {
             returnedDataForDate[tag] = returnedDataForDate[tag] + 1;

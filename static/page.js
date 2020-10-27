@@ -69,8 +69,7 @@ function addRow(bugSummary) {
 
   let row = table.insertRow(table.rows.length);
 
-  let num_column = document.createElement("th");
-  num_column.scope = "row";
+  let num_column = document.createElement("td");
   num_column.appendChild(document.createTextNode(table.rows.length - 1));
   row.appendChild(num_column);
 
@@ -131,7 +130,7 @@ function addRow(bugSummary) {
   for (let commit of bugSummary.commits) {
     for (let testing_tag of commit.testing || []) {
       let testing_tags_list_item = document.createElement("li");
-      testing_tags_list_item.appendChild(document.createTextNode(testing_tag));
+      testing_tags_list_item.appendChild(document.createTextNode(TESTING_TAGS[testing_tag].label));
       testing_tags_list.appendChild(testing_tags_list_item);
     }
   }
@@ -159,13 +158,15 @@ function renderTestingSummary(bugSummaries) {
     .reduce((a, b) => a + b);
 
   let testingCounts = getNewTestingTagCountObject();
-  testingCounts["none"] = 0;
   bugSummaries.forEach((summary) => {
     summary.commits.forEach((commit) => {
-      (commit.testing || []).forEach((tag) => {
-        tag = testingCounts.hasOwnProperty(tag) ? tag : "none";
-        testingCounts[tag] = testingCounts[tag] + 1;
-      });
+      if (!commit.testing || !commit.testing.length) {
+        testingCounts.missing++;
+      } else {
+        commit.testing.forEach((tag) => {
+          testingCounts[tag] = testingCounts[tag] + 1;
+        });
+      }
     });
   });
 
@@ -185,7 +186,7 @@ function renderTestingSummary(bugSummaries) {
   for (let tag in testingCounts) {
     categories.push(tag.split("-")[tag.split("-").length - 1]);
     data.push(testingCounts[tag]);
-    colors.push(TESTING_TAGS[tag]);
+    colors.push(TESTING_TAGS[tag].color);
   }
 
   var options = {
