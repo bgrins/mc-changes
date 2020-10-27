@@ -155,8 +155,7 @@ function addRow(bugSummary) {
 function renderTestingSummary(bugSummaries) {
   let metaBugID = getOption("metaBugID");
   let changesets = bugSummaries
-    .map((summary) => summary.commits)
-    .map((commit) => (commit.testing ? commit.testing.length : 0))
+    .map((summary) => summary.commits.length)
     .reduce((a, b) => a + b);
 
   let testingCounts = getNewTestingTagCountObject();
