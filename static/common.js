@@ -18,7 +18,7 @@ let TESTING_TAGS = {
 };
 
 let taskclusterLandingsArtifact = (async function () {
-  let response = await fetch(LANDINGS_URL, { cache: "no-store" });
+  let response = await fetch(LANDINGS_URL);
   let json = await response.json();
   return json;
 })();
