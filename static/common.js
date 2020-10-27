@@ -1,12 +1,12 @@
-// TODO: Fetch real data
-
-let METABUGS_URL =
-  "https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status&keywords=feature-testing-meta%2C%20&keywords_type=allwords";
+// let METABUGS_URL =
+//   "https://bugzilla.mozilla.org/rest/bug?include_fields=id,summary,status&keywords=feature-testing-meta%2C%20&keywords_type=allwords";
 let LANDINGS_URL =
   "https://community-tc.services.mozilla.com/api/index/v1/task/project.bugbug.landings_risk_report.latest/artifacts/public/landings_by_date.json";
 
 function getCSSVariableValue(name) {
-  return getComputedStyle(document.documentElement).getPropertyValue(name).trim()
+  return getComputedStyle(document.documentElement)
+    .getPropertyValue(name)
+    .trim();
 }
 
 let TESTING_TAGS = {
@@ -17,15 +17,20 @@ let TESTING_TAGS = {
   "testing-exception-other": getCSSVariableValue("--red-50"),
 };
 
-let featureMetabugs = (async function () {
-  let response = await fetch(METABUGS_URL, { cache: "no-store" });
+let taskclusterLandingsArtifact = (async function () {
+  let response = await fetch(LANDINGS_URL, { cache: "no-store" });
   let json = await response.json();
-  return json.bugs;
+  return json;
+})();
+
+let featureMetabugs = (async function () {
+  let json = await taskclusterLandingsArtifact;
+  return json.featureMetabugs;
 })();
 
 let landingsData = (async function () {
-  let response = await fetch(LANDINGS_URL, { cache: "no-store" });
-  let json = await response.json();
+  let json = await taskclusterLandingsArtifact;
+  json = json.landings;
 
   // Sort the dates so object iteration will be sequential:
   let orderedDates = [];
@@ -77,14 +82,20 @@ async function getTestingPolicySummaryData(grouping = "daily") {
 
     let originalData = data[date];
     for (let bug of originalData) {
-      for (let tag of bug.testing) {
-        returnedDataForDate[tag] = returnedDataForDate[tag] + 1;
+      for (let commit of bug.commits) {
+        if (!commit.testing) {
+          // returnedDataForDate["Missing"]
+          // console.log(commit, date, bug);
+        } else {
+          for (let tag of commit.testing) {
+            returnedDataForDate[tag] = returnedDataForDate[tag] + 1;
+          }
+        }
       }
     }
 
     dailyData[date] = returnedDataForDate;
   }
-
 
   // TODO:
   if (grouping == "weekly") {
