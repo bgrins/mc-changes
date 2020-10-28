@@ -57,11 +57,11 @@ let TESTING_TAGS = {
     label: "ui",
   },
   "testing-exception-other": {
-    color: getCSSVariableValue("--red-50"),
+    color: getCSSVariableValue("--red-80"),
     label: "other",
   },
   missing: {
-    color: getCSSVariableValue("--red-80"),
+    color: getCSSVariableValue("--red-60"),
     label: "missing",
   },
 };
@@ -123,6 +123,7 @@ async function getTestingPolicySummaryData(grouping = "daily") {
   let data = await landingsData;
 
   // console.log(data);
+  let startDate = grouping == "daily" ? "2020-09-15" : "2020-08-01";
 
   let dailyData = {};
   for (let date in data) {
@@ -130,9 +131,7 @@ async function getTestingPolicySummaryData(grouping = "daily") {
     if (
       temporal.Temporal.Date.compare(
         temporal.Temporal.Date.from(date),
-        temporal.Temporal.Date.from("2020-08-01")
-        // temporal.Temporal.Date.from("2020-09-15") // Once we get the historical data
-        // temporal.Temporal.Date.from("2020-10-16")
+        temporal.Temporal.Date.from(startDate)
       ) < 1
     ) {
       continue;
@@ -170,13 +169,8 @@ async function getTestingPolicySummaryData(grouping = "daily") {
       for (let tag in dailyData[daily]) {
         weeklyData[weekStart][tag] += dailyData[daily][tag];
       }
-
-      // weeklyData[weekStart.toString()] = getNewTestingTagCountObject();
-
-      // console.log(date, date.weekOfYear, date.year, date.dayOfWeek);
     }
 
-    console.log("Returning weekly", weeklyData);
     return weeklyData;
   } else if (grouping == "monthly") {
     let monthlyData = {};
