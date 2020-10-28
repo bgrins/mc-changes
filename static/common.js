@@ -130,7 +130,8 @@ async function getTestingPolicySummaryData(grouping = "daily") {
     if (
       temporal.Temporal.Date.compare(
         temporal.Temporal.Date.from(date),
-        temporal.Temporal.Date.from("2020-09-15") // Once we get the historical data
+        temporal.Temporal.Date.from("2020-08-01")
+        // temporal.Temporal.Date.from("2020-09-15") // Once we get the historical data
         // temporal.Temporal.Date.from("2020-10-16")
       ) < 1
     ) {
@@ -178,13 +179,21 @@ async function getTestingPolicySummaryData(grouping = "daily") {
     console.log("Returning weekly", weeklyData);
     return weeklyData;
   } else if (grouping == "monthly") {
-    // .toYearMonth()
-  }
+    let monthlyData = {};
+    for (let daily in dailyData) {
+      let date = temporal.Temporal.Date.from(daily);
+      let yearMonth = date.toYearMonth();
 
-  // If grouping by week:
-  // let foo = temporal.Temporal.Date.from("2020-10-09")
-  // foo.weekOfYear
-  // foo.year
+      if (!monthlyData[yearMonth]) {
+        monthlyData[yearMonth] = getNewTestingTagCountObject();
+      }
+
+      for (let tag in dailyData[daily]) {
+        monthlyData[yearMonth][tag] += dailyData[daily][tag];
+      }
+    }
+    return monthlyData;
+  }
 
   return dailyData;
 }
