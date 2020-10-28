@@ -6,6 +6,8 @@
   <title>testing policy - mc-changes</title>
   <link href='../static/page.css' rel='stylesheet' type='text/css'>
   <link href='../static/areweyet/apexcharts.css' rel='stylesheet' type='text/css'>
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>➲</text></svg>">
 </head>
 
 <body class="loading-data">
@@ -19,9 +21,9 @@
     <aside>
       <h3>Controls</h3>
       <ul>
-        <li><label><input name="grouping" type="radio" value="daily" checked />Daily</label></li>
-        <li><label><input name="grouping" type="radio" value="weekly" />Weekly</label></li>
-        <!-- <li><label><input name="grouping" type="radio" value="monthly" />Monthly</label></li> -->
+        <li><label><input name="grouping" type="radio" value="daily" />Daily</label></li>
+        <li><label><input name="grouping" type="radio" value="weekly" checked />Weekly</label></li>
+        <li><label><input name="grouping" type="radio" value="monthly" />Monthly</label></li>
       </ul>
     </aside>
     <main>
@@ -68,40 +70,62 @@
           }
         }
 
-        var options = {
-          series,
-          colors,
-          chart: {
-            height: 350,
-            type: "line",
-            zoom: {
-              enabled: false,
-            },
-          },
-          dataLabels: {
-            enabled: false,
-          },
-          stroke: {
-            curve: "straight",
-          },
-          // title: {
-          //   text: "Product Trends by Month",
-          //   align: "left",
-          // },
-          grid: {
-            row: {
-              colors: ["#f3f3f3", "transparent"], // takes an array which will be repeated on columns
-              opacity: 0.5,
-            },
-          },
-          xaxis: {
-            categories: xaxisCategories,
-          },
-        };
+        // var options = {
+        //   series,
+        //   colors,
+        //   chart: {
+        //     height: 350,
+        //     type: "line",
+        //     zoom: {
+        //       enabled: false,
+        //     },
+        //   },
+        //   dataLabels: {
+        //     enabled: false,
+        //   },
+        //   stroke: {
+        //     curve: "straight",
+        //   },
+        //   grid: {
+        //     row: {
+        //       colors: ["#f3f3f3", "transparent"], // takes an array which will be repeated on columns
+        //       opacity: 0.5,
+        //     },
+        //   },
+        //   xaxis: {
+        //     categories: xaxisCategories,
+        //   },
+        // };
 
         if (chart) {
           chart.destroy();
         }
+
+        var options = {
+          series,
+          colors,
+          chart: {
+            type: 'bar',
+            height: 350,
+            stacked: true,
+            toolbar: {
+              show: true
+            },
+            zoom: {
+              enabled: true
+            }
+          },
+          plotOptions: {
+            bar: {
+              horizontal: false,
+            },
+          },
+          xaxis: {
+            categories: xaxisCategories
+          }
+        };
+
+
         chart = new ApexCharts(document.querySelector("#chart"), options);
         chart.render();
       }
