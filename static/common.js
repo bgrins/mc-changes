@@ -45,7 +45,7 @@ let TESTING_TAGS = {
     label: "approved",
   },
   "testing-exception-unchanged": {
-    color: getCSSVariableValue("--yellow-50"),
+    color: getCSSVariableValue("--teal-60"),
     label: "unchanged",
   },
   "testing-exception-elsewhere": {
@@ -57,7 +57,7 @@ let TESTING_TAGS = {
     label: "ui",
   },
   "testing-exception-other": {
-    color: getCSSVariableValue("--red-80"),
+    color: getCSSVariableValue("--yellow-50"),
     label: "other",
   },
   missing: {

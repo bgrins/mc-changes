@@ -125,14 +125,12 @@ function addRow(bugSummary) {
   let testing_tags_list = document.createElement("ul");
   for (let commit of bugSummary.commits) {
     let testing_tags_list_item = document.createElement("li");
-    if (!commit.testing || commit.testing.length == 0) {
+    if (!commit.testing || commit.testing == "none") {
       testing_tags_list_item.append(document.createTextNode("missing"));
     } else {
-      for (let testing_tag of commit.testing) {
-        testing_tags_list_item.append(
-          document.createTextNode(TESTING_TAGS[testing_tag].label)
-        );
-      }
+      testing_tags_list_item.append(
+        document.createTextNode(TESTING_TAGS[commit.testing].label)
+      );
     }
     testing_tags_list.append(testing_tags_list_item);
   }
@@ -168,19 +166,21 @@ function addRow(bugSummary) {
 
 function renderTestingSummary(bugSummaries) {
   let metaBugID = getOption("metaBugID");
-  let changesets = bugSummaries
-    .map((summary) => summary.commits.length)
-    .reduce((a, b) => a + b);
+
+  let changesets = [];
+  if (bugSummaries.length) {
+    changesets = bugSummaries
+      .map((summary) => summary.commits.length)
+      .reduce((a, b) => a + b);
+  }
 
   let testingCounts = getNewTestingTagCountObject();
   bugSummaries.forEach((summary) => {
     summary.commits.forEach((commit) => {
-      if (!commit.testing || !commit.testing.length) {
+      if (!commit.testing || commit.testing == "none") {
         testingCounts.missing++;
       } else {
-        commit.testing.forEach((tag) => {
-          testingCounts[tag] = testingCounts[tag] + 1;
-        });
+        testingCounts[commit.testing] = testingCounts[commit.testing] + 1;
       }
     });
   });
@@ -294,10 +294,7 @@ async function buildTable() {
   if (testingTags) {
     bugSummaries = bugSummaries.filter((bugSummary) =>
       bugSummary.commits.some((commit) => {
-        return (
-          commit.testing &&
-          commit.testing.some((tag) => testingTags.includes(tag))
-        );
+        return commit.testing && testingTags.includes(commit.testing);
       })
     );
   }
