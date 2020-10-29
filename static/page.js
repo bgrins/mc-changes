@@ -257,6 +257,7 @@ async function buildTable() {
   let data = await landingsData;
   let metaBugID = getOption("metaBugID");
   let testingTags = getOption("testingTags");
+  let includeUnknown = testingTags.includes("unknown");
   if (testingTags.includes("missing")) {
     testingTags[testingTags.indexOf("missing")] = "none";
   }
@@ -297,6 +298,9 @@ async function buildTable() {
   if (testingTags) {
     bugSummaries = bugSummaries.filter((bugSummary) =>
       bugSummary.commits.some((commit) => {
+        if (includeUnknown && !commit.testing) {
+          return true;
+        }
         return commit.testing && testingTags.includes(commit.testing);
       })
     );
