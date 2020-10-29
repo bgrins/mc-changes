@@ -60,10 +60,14 @@ let TESTING_TAGS = {
     color: getCSSVariableValue("--yellow-50"),
     label: "other",
   },
-  missing: {
+  none: {
     color: getCSSVariableValue("--red-60"),
     label: "missing",
   },
+  unknown: {
+    color: getCSSVariableValue("--red-70"),
+    label: "unknown",
+  }
 };
 
 let taskclusterLandingsArtifact = (async function () {
@@ -142,19 +146,19 @@ async function getTestingPolicySummaryData(grouping = "daily") {
     let originalData = data[date];
     for (let bug of originalData) {
       for (let commit of bug.commits) {
-        if (!commit.testing || !commit.testing.length) {
-          // XXX distinguish between unknown and missing
-          returnedDataForDate.missing++;
+        if (!commit.testing ) {
+          returnedDataForDate.unknown++;
         } else {
-          for (let tag of commit.testing) {
-            returnedDataForDate[tag] = returnedDataForDate[tag] + 1;
-          }
+          returnedDataForDate[commit.testing] =
+            returnedDataForDate[commit.testing] + 1;
         }
       }
     }
 
     dailyData[date] = returnedDataForDate;
   }
+
+  console.log(dailyData);
 
   if (grouping == "weekly") {
     let weeklyData = {};

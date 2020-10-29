@@ -125,8 +125,8 @@ function addRow(bugSummary) {
   let testing_tags_list = document.createElement("ul");
   for (let commit of bugSummary.commits) {
     let testing_tags_list_item = document.createElement("li");
-    if (!commit.testing || commit.testing == "none") {
-      testing_tags_list_item.append(document.createTextNode("missing"));
+    if (!commit.testing) {
+      testing_tags_list_item.append(document.createTextNode("unknown"));
     } else {
       testing_tags_list_item.append(
         document.createTextNode(TESTING_TAGS[commit.testing].label)
@@ -177,8 +177,8 @@ function renderTestingSummary(bugSummaries) {
   let testingCounts = getNewTestingTagCountObject();
   bugSummaries.forEach((summary) => {
     summary.commits.forEach((commit) => {
-      if (!commit.testing || commit.testing == "none") {
-        testingCounts.missing++;
+      if (!commit.testing) {
+        testingCounts.unknown++;
       } else {
         testingCounts[commit.testing] = testingCounts[commit.testing] + 1;
       }
@@ -199,7 +199,7 @@ function renderTestingSummary(bugSummaries) {
   let colors = [];
   let data = [];
   for (let tag in testingCounts) {
-    categories.push(tag.split("-")[tag.split("-").length - 1]);
+    categories.push(TESTING_TAGS[tag].label);
     data.push(testingCounts[tag]);
     colors.push(TESTING_TAGS[tag].color);
   }
@@ -257,6 +257,9 @@ async function buildTable() {
   let data = await landingsData;
   let metaBugID = getOption("metaBugID");
   let testingTags = getOption("testingTags");
+  if (testingTags.includes("missing")) {
+    testingTags[testingTags.indexOf("missing")] = "none";
+  }
 
   let bugSummaries = [].concat.apply([], Object.values(data));
   if (metaBugID) {
