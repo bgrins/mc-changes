@@ -27,7 +27,31 @@
       </ul>
     </aside>
     <main>
-      <div id="chart"></div>
+      <details open>
+        <summary>
+          <h3>All Commits</h3>
+        </summary>
+        <div id="all-chart">
+          <div class="chart"></div>
+        </div>
+      </details>
+      <details open>
+        <summary>
+          <h3>Backed Out Commits</h3>
+        </summary>
+        <div id="backedout-chart">
+          <div class="chart"></div>
+        </div>
+      </details>
+
+      <details open>
+        <summary>
+          <h3>Commits that caused a regression</h3>
+        </summary>
+        <div id="regression-chart">
+          <div class="chart"></div>
+        </div>
+      </details>
     </main>
   </div>
 

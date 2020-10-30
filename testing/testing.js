@@ -1,6 +1,10 @@
 
     (function () {
-      let chart = null;
+      let charts = {
+        all: null,
+        backedout: null,
+        regression: null,
+      };
       let radios = [...document.querySelectorAll("input[name=grouping]")];
       var previouslySelected = document.querySelector("input[name=grouping]:checked");
       for (let radio of radios) {
@@ -12,11 +16,7 @@
         });
       }
 
-      async function rerender(grouping) {
-        let summaryData = await getTestingPolicySummaryData(grouping);
-        // console.log(summaryData);
-        // TODO: Print summary percentages etc on top of graph
-
+      function rerenderChart(name, data) {
         let series = [];
         let colors = [];
         for (let tag in TESTING_TAGS) {
@@ -25,44 +25,13 @@
         }
 
         let xaxisCategories = [];
-        for (let date in summaryData) {
+        for (let date in data) {
           xaxisCategories.push(date);
           let i = 0;
-          for (let tag in summaryData[date]) {
-            series[i].data.push(summaryData[date][tag]);
+          for (let tag in data[date]) {
+            series[i].data.push(data[date][tag]);
             i++;
           }
-        }
-
-        // var options = {
-        //   series,
-        //   colors,
-        //   chart: {
-        //     height: 350,
-        //     type: "line",
-        //     zoom: {
-        //       enabled: false,
-        //     },
-        //   },
-        //   dataLabels: {
-        //     enabled: false,
-        //   },
-        //   stroke: {
-        //     curve: "straight",
-        //   },
-        //   grid: {
-        //     row: {
-        //       colors: ["#f3f3f3", "transparent"], // takes an array which will be repeated on columns
-        //       opacity: 0.5,
-        //     },
-        //   },
-        //   xaxis: {
-        //     categories: xaxisCategories,
-        //   },
-        // };
-
-        if (chart) {
-          chart.destroy();
         }
 
         var options = {
@@ -70,7 +39,7 @@
           colors,
           chart: {
             type: 'bar',
-            height: 350,
+            height: 300,
             stacked: true,
             toolbar: {
               show: true
@@ -89,9 +58,27 @@
           }
         };
 
+        // TODO: Print summary percentages etc on top of graph
+        let chartContainer = document.querySelector(`#${name}-chart`)
 
-        chart = new ApexCharts(document.querySelector("#chart"), options);
-        chart.render();
+        if (charts[name]) {
+          charts[name].destroy();
+        }
+        charts[name] = new ApexCharts(chartContainer.querySelector(".chart"), options);
+        charts[name].render();
+      }
+
+      async function rerender(grouping) {
+        let allData = await getTestingPolicySummaryData(grouping);
+        rerenderChart("all", allData);
+
+        // let backedoutData = await getTestingPolicySummaryData(grouping, (bug) => {
+        //   return false;
+        // });
+        // rerenderChart("backedout", backedoutData);
+
+        // let regressionData = await getTestingPolicySummaryData(grouping);
+        // rerenderChart("regression", regressionData);
       }
       rerender(previouslySelected ? previouslySelected.value : undefined);
     })();

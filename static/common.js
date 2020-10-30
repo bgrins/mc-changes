@@ -123,7 +123,7 @@ function getNewTestingTagCountObject() {
   return obj;
 }
 
-async function getTestingPolicySummaryData(grouping = "daily") {
+async function getTestingPolicySummaryData(grouping = "daily", filter) {
   let data = await landingsData;
 
   // console.log(data);
@@ -145,6 +145,9 @@ async function getTestingPolicySummaryData(grouping = "daily") {
 
     let originalData = data[date];
     for (let bug of originalData) {
+      if (filter && !filter(bug)) {
+        continue;
+      }
       for (let commit of bug.commits) {
         if (!commit.testing ) {
           returnedDataForDate.unknown++;
