@@ -73,7 +73,9 @@
         rerenderChart("all", allData);
 
         // let backedoutData = await getTestingPolicySummaryData(grouping, (bug) => {
-        //   return false;
+        //   return bug.commits.some(c => {
+        //     true
+        //   });
         // });
         // rerenderChart("backedout", backedoutData);
 
