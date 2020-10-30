@@ -89,7 +89,8 @@ function rerender() {
       },
     ],
     chart: {
-      height: 350,
+      height: 300,
+      width: 800,
       type: "heatmap",
     },
     stroke: {
@@ -123,9 +124,6 @@ function rerender() {
     },
     xaxis: {
       type: "category",
-    },
-    title: {
-      text: "Rounded (Range without Shades)",
     },
   };
 

@@ -108,6 +108,12 @@ aside ul {
 aside ul li {
   list-style: none;
 }
+/*
+.chart-container {
+  display: flex;
+  justify-content: center;
+}
+*/
 
 .loading-data #grid,
 .loader {
@@ -143,7 +149,7 @@ aside ul li {
 .loader:after {
   position: absolute;
   top: 0;
-  content: '';
+  content: "";
 }
 .loader:before {
   left: -1.5em;
@@ -177,4 +183,3 @@ aside ul li {
     height: 5em;
   }
 }
-
