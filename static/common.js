@@ -65,7 +65,7 @@ let TESTING_TAGS = {
     label: "missing",
   },
   unknown: {
-    color: getCSSVariableValue("--red-70"),
+    color: getCSSVariableValue("--grey-30"),
     label: "unknown",
   }
 };
@@ -127,8 +127,8 @@ async function getTestingPolicySummaryData(grouping = "daily", filter) {
   let data = await landingsData;
 
   // console.log(data);
-  let startDate = grouping == "daily" ? "2020-09-15" : "2020-08-01";
-
+  // let startDate = grouping == "daily" ? "2020-09-15" : "2020-08-16";
+  let startDate = "2020-09-01";
   let dailyData = {};
   for (let date in data) {
     // Ignore data before the testing policy took place.

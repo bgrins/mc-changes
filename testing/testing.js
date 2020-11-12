@@ -17,7 +17,7 @@
     });
   }
 
-  function rerenderChart(name, data) {
+  function rerenderChart(name, data, grouping) {
     let series = [];
     let colors = [];
     for (let tag in TESTING_TAGS) {
@@ -34,6 +34,25 @@
         i++;
       }
     }
+
+    let annotations =
+      grouping === "monthly"
+        ? undefined
+        : {
+            xaxis: [
+              {
+                x: "2020-09-13",
+                borderColor: "#775DD0aa",
+                offsetX: 0,
+                label: {
+                  style: {
+                    color: "orange",
+                  },
+                  text: "rollout",
+                },
+              },
+            ],
+          };
 
     var options = {
       series,
@@ -57,6 +76,7 @@
       xaxis: {
         categories: xaxisCategories,
       },
+      annotations,
     };
 
     // TODO: Print summary percentages etc on top of graph
@@ -74,21 +94,21 @@
 
   async function rerender(grouping) {
     let allData = await getTestingPolicySummaryData(grouping);
-    rerenderChart("all", allData);
+    rerenderChart("all", allData, grouping);
 
     let backedoutData = await getTestingPolicySummaryData(grouping, (bug) => {
       return bug.commits.some((c) => {
         return c.backedout;
       });
     });
-    rerenderChart("backedout", backedoutData);
+    rerenderChart("backedout", backedoutData, grouping);
 
     let regressionData = await getTestingPolicySummaryData(grouping, (bug) => {
       return bug.commits.some((c) => {
         return c.regressor;
       });
     });
-    rerenderChart("regression", regressionData);
+    rerenderChart("regression", regressionData, grouping);
   }
   rerender(previouslySelected ? previouslySelected.value : undefined);
 })();

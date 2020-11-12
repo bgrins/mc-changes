@@ -13,8 +13,8 @@
 <body class="loading-data">
   <h1>mc changes</h1>
   <div id="links">
-    <a href="../">Change Report</a>
-    <a href="./">Testing Policy Report</a>
+    <a href="../">Changes</a> |
+    <a href="./">Testing Policy</a>
   </div>
   <div class="loader"></div>
   <div id="grid">
@@ -27,6 +27,14 @@
       </ul>
     </aside>
     <main>
+      <div class="arewe-update">
+        See the <a href="https://firefox-source-docs.mozilla.org/testing/testing-policy/">Testing Policy for code landing in mozilla-central</a> for a description of each tag.
+        In addition to these:
+        <ul>
+          <li>`unknown` is for commits that don't have an accessible phabricator revision associated with them (i.e. automated wpt vendoring or restricted bugs).</li>
+          <li>`missing` is for commits that haven't had any tags applied.</li>
+        </ul> 
+      </div>
       <details open>
         <summary>
           <h3>All Commits</h3>
