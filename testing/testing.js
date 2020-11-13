@@ -25,6 +25,31 @@
       colors.push(TESTING_TAGS[tag].color);
     }
 
+    let dataContainer = document.querySelector(`#${name}-data`);
+    dataContainer.textContent = "\t";
+
+    dataContainer.textContent += "total commits\t";
+    for (let tag in TESTING_TAGS) {
+      dataContainer.textContent += `${tag}\t`;
+    }
+
+    for (let date in data) {
+      dataContainer.textContent += `\n`;
+      dataContainer.textContent += `${date}\t`;
+
+      let total = 0;
+      for (let tag in data[date]) {
+        total += data[date][tag];
+      }
+      dataContainer.textContent += `${total}\t`;
+      for (let tag in data[date]) {
+        // dataContainer.textContent += `${Math.round(parseFloat((data[date][tag] / total) * 100))}% (${data[date][tag]})\t`;
+        // dataContainer.textContent += `${Math.round(parseFloat((data[date][tag] / total) * 100))}%\t`;
+        dataContainer.textContent += `${data[date][tag]}\t`;
+      }
+    }
+
+
     let xaxisCategories = [];
     for (let date in data) {
       xaxisCategories.push(date);
@@ -41,7 +66,7 @@
         : {
             xaxis: [
               {
-                x: "2020-09-13",
+                x: "2020-09-20",
                 borderColor: "#775DD0aa",
                 offsetX: 0,
                 label: {
@@ -81,10 +106,10 @@
 
     // TODO: Print summary percentages etc on top of graph
     let chartContainer = document.querySelector(`#${name}-chart`);
-
     if (charts[name]) {
       charts[name].destroy();
     }
+
     charts[name] = new ApexCharts(
       chartContainer.querySelector(".chart"),
       options
